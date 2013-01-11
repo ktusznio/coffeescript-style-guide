@@ -1,23 +1,3 @@
-# CoffeeScript Style Guide
-
-This guide presents a collection of best-practices and coding conventions for the [CoffeeScript][coffeescript] programming language.
-
-This guide is intended to be community-driven, and contributions are highly encouraged.
-
-Please note that this is a work-in-progress: there is much more that can be specified, and some of the guidelines that have been specified may not be deemed to be idiomatic by the community (in which case, these offending guidelines will be modified or removed, as appropriate).
-
-## Inspiration
-
-The details in this guide have been very heavily inspired by several existing style guides and other resources. In particular:
-
-- [PEP-8][pep8]: Style Guide for Python Code
-- Bozhidar Batsov's [Ruby Style Guide][ruby-style-guide]
-- [Google's JavaScript Style Guide][google-js-styleguide]
-- [Common CoffeeScript Idioms][common-coffeescript-idioms]
-- Thomas Reynolds' [CoffeeScript-specific Style Guide][coffeescript-specific-style-guide]
-- Jeremy Ashkenas' [code review][spine-js-code-review] of [Spine][spine-js]
-- The [CoffeeScript FAQ][coffeescript-faq]
-
 ## Table of Contents
 
 * [The CoffeeScript Style Guide](#guide)
@@ -27,7 +7,6 @@ The details in this guide have been very heavily inspired by several existing st
         * [Blank Lines](#blank_lines)
         * [Trailing Whitespace](#trailing_whitespace)
         * [Encoding](#encoding)
-    * [Module Imports](#module_imports)
     * [Whitespace in Expressions and Statements](#whitespace)
     * [Comments](#comments)
         * [Block Comments](#block_comments)
@@ -53,12 +32,10 @@ Use **spaces only**, with **2 spaces** per indentation level. Never mix tabs and
 <a name="maximum_line_length"/>
 ### Maximum Line Length
 
-Limit all lines to a maximum of 79 characters.
+Limit all lines to a maximum of 80 characters.
 
 <a name="blank_lines"/>
 ### Blank Lines
-
-Separate top-level function and class definitions with a single blank line.
 
 Separate method definitions inside of a class with a single blank line.
 
@@ -73,21 +50,6 @@ Do not include trailing whitespace on any lines.
 ### Encoding
 
 UTF-8 is the preferred source file encoding.
-
-<a name="module_imports"/>
-## Module Imports
-
-If using a module system (CommonJS Modules, AMD, etc.), `require` statements should be placed on separate lines.
-
-```coffeescript
-require 'lib/setup'
-Backbone = require 'backbone'
-```
-These statements should be grouped in the following order:
-
-1. Standard library imports _(if a standard library exists)_
-2. Third party library imports
-3. Local imports _(imports specific to this application or library)_
 
 <a name="whitespace"/>
 ## Whitespace in Expressions and Statements
@@ -107,8 +69,6 @@ Avoid extraneous whitespace in the following situations:
        console.log x, y # Yes
        console.log x , y # No
     ```
-
-Additional recommendations:
 
 - Always surround these binary operators with a **single space** on either side
 
@@ -142,11 +102,21 @@ Additional recommendations:
 <a name="comments"/>
 ## Comments
 
-If modifying code that is described by an existing comment, update the comment such that it accurately reflects the new code. (Ideally, improve the code to obviate the need for the comment, and delete the comment entirely.)
+If modifying code that is described by an existing comment, update the comment such that it accurately reflects the new code.
 
-The first word of the comment should be capitalized, unless the first word is an identifier that begins with a lower-case letter.
+All comments should begin with a single '#' followed by a space.
 
-If a comment is short, the period at the end can be omitted.
+The first word of the comment should be capitalized, unless the first word is an identifier that begins with a lower-case letter. The comment should contain proper spelling and punctuation.
+
+        ```coffeescript
+           # Yes
+
+           # Update items that are ready for sale.
+
+           # No
+
+           ##update items ready for sale
+        ```
 
 <a name="block_comments"/>
 ### Block Comments
@@ -173,24 +143,17 @@ Paragraphs inside of block comments are separated by a line containing a single 
 <a name="inline_comments"/>
 ### Inline Comments
 
-Inline comments are placed on the line immediately above the statement that they are describing. If the inline comment is sufficiently short, it can be placed on the same line as the statement (separated by a single space from the end of the statement).
-
-All inline comments should start with a `#` and a single space.
-
-The use of inline comments should be limited, because their existence is typically a sign of a code smell.
-
-Do not use inline comments when they state the obvious:
-
-```coffeescript
-  # No
-  x = x + 1 # Increment x
-```
-
-However, inline comments can be useful in certain scenarios:
+Avoid comments on the same line as code.
 
 ```coffeescript
   # Yes
-  x = x + 1 # Compensate for border
+
+  # Compensate for border.
+  x = x + 1
+
+  # No
+
+  x = x + 1 # Compensate for border.
 ```
 
 <a name="naming_conventions"/>
@@ -233,6 +196,17 @@ bar = -> # Yes
 bar = () -> # No
 ```
 
+Start function bodies on a new line for functions that are even slightly complicated.
+
+```coffeescript
+# Yes
+prices = items.map (item) ->
+  item.askingPrice() + item.shipping()
+
+# No
+prices = items.map (item) -> item.askingPrice() + item.shipping()
+```
+
 In cases where method calls are being chained and the code does not fit on a single line, each call should be placed on a separate line and indented by one level (i.e., two spaces), with a leading `.`.
 
 ```coffeescript
@@ -243,46 +217,43 @@ In cases where method calls are being chained and the code does not fit on a sin
   .reduce((x, y) -> x + y)
 ```
 
+When calling functions that take objects as an argument, begin the object definitions on a new line.
+
+```coffeescript
+# Yes
+item = Item.new
+  name: "Cool jacket"
+  price: 50
+
+# No
+item = Item.new(name: "Cool jacket", price: 50)
+```
+
 When calling functions, choose to omit or include parentheses in such a way that optimizes for readability. Keeping in mind that "readability" can be subjective, the following examples demonstrate cases where parentheses have been omitted or included in a manner that the community deems to be optimal:
 
 ```coffeescript
 baz 12
 
-brush.ellipse x: 10, y: 20 # Braces can also be omitted or included for readability
-
 foo(4).bar(8)
 
 obj.value(10, 20) / obj.value(20, 10)
 
-print inspect value
+print inspect(value)
 
 new Tag(new Value(a, b), new Arg(c))
 ```
 
-You will sometimes see parentheses used to group functions (instead of being used to group function parameters). Examples of using this style (hereafter referred to as the "function grouping style"):
+Prefer to group function parameters rather than grouping functions.
 
 ```coffeescript
-($ '#selektor').addClass 'klass'
+# Yes
+$('#selektor').addClass 'klass'
+foo(4).bar 8
 
+# No
+($ '#selektor').addClass 'klass'
 (foo 4).bar 8
 ```
-
-This is in contrast to:
-
-```coffeescript
-$('#selektor').addClass 'klass'
-
-foo(4).bar 8
-```
-
-In cases where method calls are being chained, some adopters of this style prefer to use function grouping for the initial call only:
-
-```coffeescript
-($ '#selektor').addClass('klass').hide() # Initial call only
-(($ '#selektor').addClass 'klass').hide() # All calls
-```
-
-The function grouping style is not recommended. However, **if the function grouping style is adopted for a particular project, be consistent with its usage.**
 
 <a name="strings"/>
 ## Strings
@@ -290,11 +261,14 @@ The function grouping style is not recommended. However, **if the function group
 Use string interpolation instead of string concatenation:
 
 ```coffeescript
-"this is an #{adjective} string" # Yes
-"this is an " + adjective + " string" # No
+# Yes
+"this is an #{adjective} string"
+
+# No
+"this is an " + adjective + " string"
 ```
 
-Prefer single quoted strings (`''`) instead of double quoted (`""`) strings, unless features like string interpolation are being used for the given string.
+Prefer double quoted strings (`""`) instead of single quoted (`''`) strings.
 
 <a name="conditionals"/>
 ## Conditionals
@@ -429,18 +403,16 @@ Array::slice # Yes
 Array.prototype.slice # No
 ```
 
-Prefer `@property` over `this.property`.
+Prefer `@` over `this` and prefer `@property` over `this.property`.
 
 ```coffeescript
+# Yes
+$(@).hide() # Yes
 return @property # Yes
+
+# No
+$(this).hide() # No
 return this.property # No
-```
-
-However, avoid the use of **standalone** `@`:
-
-```coffeescript
-return this # Yes
-return @ # No
 ```
 
 Avoid `return` where not required, unless the explicit return increases clarity.
@@ -452,15 +424,3 @@ console.log args... # Yes
 
 (a, b, c, rest...) -> # Yes
 ```
-
-[coffeescript]: http://jashkenas.github.com/coffee-script/
-[coffeescript-issue-425]: https://github.com/jashkenas/coffee-script/issues/425
-[spine-js]: http://spinejs.com/
-[spine-js-code-review]: https://gist.github.com/1005723
-[pep8]: http://www.python.org/dev/peps/pep-0008/
-[ruby-style-guide]: https://github.com/bbatsov/ruby-style-guide
-[google-js-styleguide]: http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml
-[common-coffeescript-idioms]: http://arcturo.github.com/library/coffeescript/04_idioms.html
-[coffeescript-specific-style-guide]: http://awardwinningfjords.com/2011/05/13/coffeescript-specific-style-guide.html
-[coffeescript-faq]: https://github.com/jashkenas/coffee-script/wiki/FAQ
-[camel-case-variations]: http://en.wikipedia.org/wiki/CamelCase#Variations_and_synonyms
